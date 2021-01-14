@@ -1,7 +1,7 @@
 # OOP Course - Excercise 3 - Ariel University 2020
 #### This is excercise 3 in Object Oriented Programming course, which is an implementation of a directed weighted graphs in Python,  
 and comparing the algorithms we wrote in Java to the ones we wrote in Python, and then comparing both to NetworkX library in Python.
-![graph picture](/pictures/graph.png)
+![graph picture](/pictures/digraph.png)
 
 ## Table of content
 * [General info](#general-info)
