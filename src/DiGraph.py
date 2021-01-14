@@ -42,6 +42,8 @@ class DiGraph(GraphInteface):
             self.tag = t
 
         def __eq__(self, o: object) -> bool:
+            if type(self) != type(o):
+                return False
             return self.key == o.key
 
     class Edge:
@@ -73,6 +75,8 @@ class DiGraph(GraphInteface):
             self.tag = t
 
         def __eq__(self, o: object) -> bool:
+            if type(o) != type(self):
+                return False
             if self.src == o.src and self.dest == o.dest and self.weight == o.weight:
                 return True
             return False
@@ -102,12 +106,12 @@ class DiGraph(GraphInteface):
 
         e = DiGraph.Edge(id1, id2, weight)
         self.edges_list.append(e)
-
-        if e in self.edges_list:
-            self.edgeSize += 1
-            return True
-        else:
-            return False
+        self.edgeSize+=1
+        # if e in self.edges_list:
+        #     self.edgeSize += 1
+        return True
+        # else:
+        #     return False
 
     def add_node(self, node_id: int, pos: tuple = None) -> bool:
         if node_id in self.nodes_list.keys():
@@ -127,9 +131,14 @@ class DiGraph(GraphInteface):
             return False
 
         self.nodeSize -= 1
-        for e in self.edges_list.values():
+        self.nodes_list.pop(node_id)
+        toRemove = []
+        for e in self.edges_list:
             if e.get_src() == node_id or e.get_dest() == node_id:
-                DiGraph.remove_edge(e.get_src(), e.get_dest())
+                toRemove.append((e.get_src(), e.get_dest()))
+        for e in toRemove:
+            id1, id2 = e
+            self.remove_edge(id1, id2)
         return True
 
     def remove_edge(self, node_id1: int, node_id2: int) -> bool:
@@ -160,3 +169,23 @@ class DiGraph(GraphInteface):
 
     def get_node(self, node_id) -> Node:
         return self.nodes_list.get(node_id)
+
+    def __eq__(self, o: object) -> bool:
+        if not type(o) == type(self):
+            return False
+        if self.nodeSize != o.nodeSize or self.edgeSize != o.edgeSize:
+            return False
+        if not set(self.nodes_list.keys()) == set(o.nodes_list.keys()):
+            return False
+        set1, set2 = set(), set()
+        for edge in self.edges_list:
+            set1.add((edge.src, edge.dest, edge.weight))
+        for edge in o.edges_list:
+            set2.add((edge.src, edge.dest, edge.weight))
+        if not set1 == set2:
+            return False
+        return True
+
+
+
+

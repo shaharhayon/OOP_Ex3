@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import random
 
 
-
 def min_w(nodes_list) -> int:
     min_weight = float('inf')
     for node in nodes_list:
@@ -34,23 +33,40 @@ class GraphAlgo(GraphAlgoInterface):
                 json_string = f.read()
             a = json.loads(json_string)
             new_g = DiGraph()
-            for node in a.get('Nodes'):
-                pos = tuple([float(a) for a in node.get('pos').split(",")])
-                new_g.add_node(node.get('id'), pos)
+            if a.get('Nodes')[0].get('pos') is not None:
+                for node in a.get('Nodes'):
+                    pos = tuple([float(a) for a in node.get('pos').split(",")])
+                    new_g.add_node(node.get('id'), pos)
+            else:
+                for node in a.get('Nodes'):
+                    new_g.add_node(node.get('id'))
             for edge in a.get('Edges'):
                 new_g.add_edge(edge.get('src'), edge.get('dest'), edge.get('w'))
-                self.G = new_g
+            self.G = new_g
             return True
-        except:
+        except Exception as e:
+            print(e)
             return False
 
     def save_to_json(self, file_name: str) -> bool:
         try:
-            json_string = json.dumps(self.G)
+            json_nodes, json_edges = [], []
+            for node in self.G.nodes_list.values():
+                x_val, y_val, z_val = node.get_location()
+                node_dict = {'pos': '{x},{y},{z}'.format(x=x_val, y=y_val, z=z_val), 'id': node.get_key()}
+                json_nodes.append(node_dict)
+            for edge in self.G.edges_list:
+                edge_dict = {'src': edge.get_src(), 'w': edge.get_weight(), 'dest': edge.get_dest()}
+                json_edges.append(edge_dict)
+            # json_nodes = json.dumps(self.G.nodes_list)
+            # json_edges = json.dumps(self.G.edges_list)
+            json_dict = {'Edges': json_edges, 'Nodes': json_nodes}
+            json_string = json.dumps(json_dict)
             with open(file_name, "w") as f:
                 f.write(json_string)
             return True
-        except:
+        except Exception as e:
+            print(e)
             return False
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
@@ -139,16 +155,17 @@ class GraphAlgo(GraphAlgoInterface):
             x_vals.append(x)
             y_vals.append(y)
         plt.figure(figsize=(16, 8), dpi=100)
-        plt.scatter(x_vals,y_vals)
+        plt.scatter(x_vals, y_vals)
         # for node in self.G.get_all_v().values():
         #     x, y, z = node.get_location()
         #     plt.annotate("({x},{y}".format(x=x, y=y), (x, y))
         # size=0.001 , width=0.05, facecolor='red', head_width=3*size, head_length=5*size
-        size=0.00001
+        size = 0.00001
         for edge in self.G.edges_list:
             x1, y1, z1 = self.G.get_node(edge.src).get_location()
             x2, y2, z1 = self.G.get_node(edge.dest).get_location()
-            plt.arrow(x1, y1, x2-x1, y2-y1, length_includes_head=True, width=size, head_width=20*size, head_length=25*size)
+            plt.arrow(x1, y1, x2 - x1, y2 - y1, length_includes_head=True, width=size, head_width=20 * size,
+                      head_length=25 * size)
 
         plt.show()
 
