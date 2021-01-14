@@ -6,8 +6,7 @@ and comparing the algorithms we wrote in Java to the ones we wrote in Python, an
 ## Table of content
 * [General info](#general-info)
 * [Dependencies](#dependencies)
-* [Setup](#setup)
-
+* [Comparison](#comparison)
 
 ### General info
 This structure is capable of creating directed weighted graphs, and using a few algorithms on them:
@@ -26,5 +25,13 @@ this project is using:
 - NetworkX 2.5
 - numpy 1.19.5
 
+---
 
+### Comparison
+I have compared the running time of these 3 functions:
+- shortest_path
+- connected_component
+- connected_components  
+
+the results are in the PDF file, as well as the entire Excel spreadsheet in the xlsx file.
 
